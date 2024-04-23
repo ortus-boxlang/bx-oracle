@@ -1,4 +1,4 @@
-package ortus.boxlang.modules.bxoracle;
+package ortus.boxlang.modules.oracle;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
