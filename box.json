@@ -1,6 +1,7 @@
 {
 	"name": "BoxLang Oracle",
 	"version": "@build.version@+@build.number@",
+	"unlisted": true,
 	"location": "https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-oracle/@build.version@/bx-oracle-@build.version@.zip",
 	"author": "Ortus Solutions",
 	"homepage": "https://github.com/boxlang-modules/bx-oracle",
@@ -11,9 +12,11 @@
 	},
 	"bugs": "https://github.com/boxlang-modules/bx-oracle/issues",
 	"slug": "bx-oracle",
-	"shortDescription": "Module template for BoxLang modules",
+	"shortDescription": "Oracle JDBC Support for BoxLang",
 	"type": "boxlang-modules",
-	"keywords": ["boxlang"],
+	"keywords": [
+		"boxlang"
+	],
 	"boxlang": {
 		"minimumVersion": "1.0.0",
 		"moduleName": "oracle"
