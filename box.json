@@ -1,7 +1,6 @@
 {
 	"name": "BoxLang Oracle",
 	"version": "@build.version@+@build.number@",
-	"unlisted": true,
 	"location": "https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-oracle/@build.version@/bx-oracle-@build.version@.zip",
 	"author": "Ortus Solutions",
 	"homepage": "https://github.com/boxlang-modules/bx-oracle",
