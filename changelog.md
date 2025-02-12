@@ -9,12 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [] - 2024-05-06
+* Fixed "database property is required" error
+* Added support for `serviceName` datasource property
 
 ## [1.0.0] => 2024-APR-05
 
 - First iteration of this module
-
-[Unreleased]: https://github.com/ortus-solutions-private/bx-oracle/compare/v...HEAD
-
-[]: https://github.com/ortus-solutions-private/bx-oracle/compare/71769f649150e1ef2f90591e53cfa5102bb59d38...v

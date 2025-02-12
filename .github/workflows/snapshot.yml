@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
-          java-version: 17
+          java-version: 21
 
       - name: Format Java Source
         run: ./gradlew spotlessApply --stacktrace
@@ -63,6 +63,8 @@ jobs:
     secrets: inherit
     permissions:
       checks: write
+      pull-requests: write
       contents: write
+      issues: write
     with:
       snapshot: true

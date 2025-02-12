@@ -11,7 +11,7 @@
 	},
 	"bugs": "https://github.com/boxlang-modules/bx-oracle/issues",
 	"slug": "bx-oracle",
-	"shortDescription": "Module template for BoxLang modules",
+	"shortDescription": "Oracle JDBC Support for BoxLang",
 	"type": "boxlang-modules",
 	"keywords": ["boxlang"],
 	"boxlang": {
