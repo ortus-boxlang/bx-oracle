@@ -62,9 +62,12 @@ public class OracleDriver extends GenericJDBCDriver {
 	@Override
 	public String buildConnectionURL( DatasourceConfig config ) {
 		// Validate the database
-		String database = ( String ) config.properties.getOrDefault( "database", "" );
-		if ( database.isEmpty() ) {
-			throw new IllegalArgumentException( "The database property is required for the Oracle JDBC Driver" );
+		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "serviceName" ) ) );
+		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "SID" ) ) );
+		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "PDB" ) ) );
+		String location = ( String ) config.properties.getOrDefault( "database", "" );
+		if ( location.isEmpty() ) {
+			throw new IllegalArgumentException( "Either the serviceName, SID, or PDB property is required for the Oracle JDBC Driver." );
 		}
 
 		// Validate the host
@@ -101,7 +104,7 @@ public class OracleDriver extends GenericJDBCDriver {
 		    protocol,
 		    host,
 		    port,
-		    database
+		    location
 		);
 	}
 
