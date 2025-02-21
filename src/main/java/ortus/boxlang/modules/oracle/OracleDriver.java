@@ -65,7 +65,7 @@ public class OracleDriver extends GenericJDBCDriver {
 		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "serviceName" ) ) );
 		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "SID" ) ) );
 		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "PDB" ) ) );
-		String location = ( String ) config.properties.getOrDefault( "database", "" );
+		String location = ( String ) config.properties.getOrDefault( Key.database, "" );
 		if ( location.isEmpty() ) {
 			throw new IllegalArgumentException( "Either the serviceName, SID, or PDB property is required for the Oracle JDBC Driver." );
 		}
