@@ -61,15 +61,6 @@ public class OracleDriver extends GenericJDBCDriver {
 
 	@Override
 	public String buildConnectionURL( DatasourceConfig config ) {
-		// Validate the database
-		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "serviceName" ) ) );
-		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "SID" ) ) );
-		config.properties.computeIfAbsent( Key.database, ( k ) -> config.properties.getAsString( Key.of( "PDB" ) ) );
-		String location = ( String ) config.properties.getOrDefault( Key.database, "" );
-		if ( location.isEmpty() ) {
-			throw new IllegalArgumentException( "Either the serviceName, SID, or PDB property is required for the Oracle JDBC Driver." );
-		}
-
 		// Validate the host
 		String host = ( String ) config.properties.getOrDefault( "host", DEFAULT_HOST );
 		if ( host.isEmpty() ) {
@@ -97,14 +88,29 @@ public class OracleDriver extends GenericJDBCDriver {
 			    )
 			);
 		}
-
+		// Validate the database
+		String sid = ( String ) config.properties.getOrDefault( "SID", "" );
+		if ( !sid.isBlank() ) {
+			// Build the connection URL
+			return String.format(
+			    "jdbc:oracle:%s:@%s:%s:%s",
+			    protocol,
+			    host,
+			    port,
+			    sid
+			);
+		}
+		String serviceName = ( String ) config.properties.getOrDefault( "serviceName", "" );
+		if ( serviceName.isBlank() ) {
+			throw new IllegalArgumentException( "Either the serviceName or SID property is required for the Oracle JDBC Driver." );
+		}
 		// Build the connection URL
 		return String.format(
 		    "jdbc:oracle:%s:@//%s:%s/%s",
 		    protocol,
 		    host,
 		    port,
-		    location
+		    serviceName
 		);
 	}
 
