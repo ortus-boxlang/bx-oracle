@@ -42,7 +42,7 @@ public class IntegrationTest extends BaseIntegrationTest {
 		        Struct.of(
 		            "driver", "oracle",
 		            "username", "system",
-		            "password", "boxlangRocks",
+		            "password", "boxlangrocks",
 		            "serviceName", "XEPDB1",
 		            "SID", ""
 		        )
@@ -53,7 +53,7 @@ public class IntegrationTest extends BaseIntegrationTest {
 		runtime.executeSource(
 		    """
 				result = queryExecute(
-					"SELECT * FROM v$version",
+					"SELECT 'Connected to Oracle XE!' AS status FROM dual",
 					{},
 					{ "datasource" : "oracle" }
 				);
