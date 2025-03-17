@@ -2,14 +2,14 @@
 # Default username is system
 services:
   oracle-xe:
-    image: container-registry.oracle.com/database/express:21.3.0-xe
+    image: gvenzl/oracle-xe:21-slim
     platform: linux/amd64
     restart: always
     ports:
       - "1521:1521" # Oracle Listener
       - "5500:5500" # Enterprise Manager Express
     environment:
-      ORACLE_PWD: "boxlangrocks"
+      ORACLE_PASSWORD: "boxlangrocks"
       ORACLE_CHARACTERSET: "AL32UTF8"
     volumes:
       - oracle_data:/opt/oracle/oradata

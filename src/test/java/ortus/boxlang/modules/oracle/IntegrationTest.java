@@ -57,6 +57,7 @@ public class IntegrationTest extends BaseIntegrationTest {
 					{},
 					{ "datasource" : "oracle" }
 				);
+				println( result )
 			""",
 		    context
 		);
