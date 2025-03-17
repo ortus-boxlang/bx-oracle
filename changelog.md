@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-03-17
+
 ### Fixed
 
 - Using the wrong JDBC Driver for oracle
@@ -27,5 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First iteration of this module
 
-[Unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.2.0...HEAD
+
+[1.2.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.0.0...v1.2.0
+
 [1.0.0]: https://github.com/ortus-boxlang/bx-oracle/compare/846a8d4a5981f5391763e93b2fe68649f2d4f5e4...v1.0.0
