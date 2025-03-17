@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Using the wrong JDBC Driver for oracle
+
+### Added
+
+- Docker compose for oracle
+- Updated all actions to use our standard
+
 ## [1.1.0] - 2025-02-12
 
 - Fixed "database property is required" error

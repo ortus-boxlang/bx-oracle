@@ -88,10 +88,11 @@ public class OracleDriver extends GenericJDBCDriver {
 			    )
 			);
 		}
+
 		// Validate the database
 		String sid = ( String ) config.properties.getOrDefault( "SID", "" );
 		if ( !sid.isBlank() ) {
-			// Build the connection URL
+			// Build the connection URL with the SID
 			return String.format(
 			    "jdbc:oracle:%s:@%s:%s:%s",
 			    protocol,
@@ -100,10 +101,12 @@ public class OracleDriver extends GenericJDBCDriver {
 			    sid
 			);
 		}
+
 		String serviceName = ( String ) config.properties.getOrDefault( "serviceName", "" );
 		if ( serviceName.isBlank() ) {
 			throw new IllegalArgumentException( "Either the serviceName or SID property is required for the Oracle JDBC Driver." );
 		}
+
 		// Build the connection URL
 		return String.format(
 		    "jdbc:oracle:%s:@//%s:%s/%s",
