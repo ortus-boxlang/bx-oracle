@@ -9,10 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2024-06-13
+### Fixed
+
+- Using the wrong JDBC Driver for oracle
+
+### Added
+
+- Docker compose for oracle
+- Updated all actions to use our standard
+
+## [1.1.0] - 2025-02-12
+
+- Fixed "database property is required" error
+- Added support for `serviceName` datasource property
+
+## [1.0.0] => 2024-APR-05
 
 - First iteration of this module
 
-[Unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.0.0...HEAD
-
+[Unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.1.0...HEAD
 [1.0.0]: https://github.com/ortus-boxlang/bx-oracle/compare/846a8d4a5981f5391763e93b2fe68649f2d4f5e4...v1.0.0

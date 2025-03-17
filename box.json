@@ -3,17 +3,19 @@
 	"version": "@build.version@+@build.number@",
 	"location": "https://downloads.ortussolutions.com/ortussolutions/boxlang-modules/bx-oracle/@build.version@/bx-oracle-@build.version@.zip",
 	"author": "Ortus Solutions",
-	"homepage": "https://github.com/boxlang-modules/bx-oracle",
-	"documentation": "https://github.com/boxlang-modules/bx-oracle",
+	"homepage": "https://github.com/ortus-boxlang/bx-oracle",
+	"documentation": "https://github.com/ortus-boxlang/bx-oracle",
 	"repository": {
 		"type": "git",
-		"URL": "https://github.com/boxlang-modules/bx-oracle"
+		"URL": "https://github.com/ortus-boxlang/bx-oracle"
 	},
-	"bugs": "https://github.com/boxlang-modules/bx-oracle/issues",
+	"bugs": "https://ortussolutions.atlassian.net/browse/BLMODULES",
 	"slug": "bx-oracle",
 	"shortDescription": "Oracle JDBC Support for BoxLang",
 	"type": "boxlang-modules",
-	"keywords": ["boxlang"],
+	"keywords": [
+		"boxlang"
+	],
 	"boxlang": {
 		"minimumVersion": "1.0.0",
 		"moduleName": "oracle"
@@ -26,10 +28,9 @@
 		}
 	],
 	"devDependencies": {
+		"commandbox-boxlang": "*",
 		"commandbox-cfformat": "*",
 		"commandbox-docbox": "*",
-		"commandbox-dotenv": "*",
-		"commandbox-cfconfig": "*",
 		"testbox": "*"
 	},
 	"ignore": [
@@ -41,8 +42,5 @@
 		"/src/**",
 		"gradle/**"
 	],
-	"scripts": {
-		"setupTemplate": "task run taskFile=src/build/SetupTemplate.cfc",
-		"onRelease": "publish"
-	}
+	"scripts": {}
 }
