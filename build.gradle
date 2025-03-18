@@ -41,7 +41,7 @@ dependencies {
     compileOnly files( 'src/test/resources/libs/boxlang-' + boxlangVersion + '.jar' )
 
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
-	implementation 'com.oracle.database.jdbc:ojdbc11:23.7.0.25.01'
+	implementation 'com.oracle.database.jdbc:ojdbc17-production:23.7.0.25.01'
 
     // Testing Dependencies
 	testImplementation files( '../../boxlang/build/distributions/boxlang-' + boxlangVersion + '.jar' )
