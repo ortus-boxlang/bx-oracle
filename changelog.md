@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-06-24
+
 ### Updated
 
 - Bumps com.oracle.database.jdbc:ojdbc17-production from 23.7.0.25.01 to 23.8.0.25.04.
@@ -39,10 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First iteration of this module
 
-[Unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.3.0...HEAD
-
+[unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.2.0...v1.3.0
-
 [1.2.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.0.0...v1.2.0
-
 [1.0.0]: https://github.com/ortus-boxlang/bx-oracle/compare/846a8d4a5981f5391763e93b2fe68649f2d4f5e4...v1.0.0
