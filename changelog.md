@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updates
+
+- Bumps com.oracle.database.jdbc:ojdbc17-production from 23.8.0.25.04 to 23.9.0.25.07.
+
 ## [1.4.0] - 2025-06-24
 
 ### Updated
