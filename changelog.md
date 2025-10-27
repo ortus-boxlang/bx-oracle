@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Updates to all GitHub Actions to use latest Ortus standard actions.
+- Updates to the Gradle build to use latest Ortus standard build scripts.
+- Tons of Documentation updates to the README, CONTRIBUTING, and Copilot Instructions.md.
+- Added Copilot Instructions.md for AI-assisted development.
+
 ## [1.5.0] - 2025-08-04
 
 ### Updates
