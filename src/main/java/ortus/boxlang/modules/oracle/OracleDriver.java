@@ -17,12 +17,15 @@
  */
 package ortus.boxlang.modules.oracle;
 
+import java.sql.Types;
+
 import ortus.boxlang.runtime.config.segments.DatasourceConfig;
 import ortus.boxlang.runtime.dynamic.casters.StringCaster;
 import ortus.boxlang.runtime.jdbc.drivers.DatabaseDriverType;
 import ortus.boxlang.runtime.jdbc.drivers.GenericJDBCDriver;
 import ortus.boxlang.runtime.scopes.Key;
 import ortus.boxlang.runtime.types.IStruct;
+import ortus.boxlang.runtime.types.QueryColumnType;
 import ortus.boxlang.runtime.types.Struct;
 
 /**
@@ -115,6 +118,42 @@ public class OracleDriver extends GenericJDBCDriver {
 		    port,
 		    serviceName
 		);
+	}
+
+	/**
+	 * Map a SQL type to a QueryColumnType. The default implementation will use the mappings in the QueryColumnType enum.
+	 * Override this method if the driver has specific mappings. Example, mapping RowId in Oracle to a String type.
+	 * 
+	 * @param sqlType The SQL type to map, from java.sql.Types
+	 * 
+	 * @return The QueryColumnType
+	 */
+	// @Override
+	public QueryColumnType mapSQLTypeToQueryColumnType( int sqlType ) {
+		// We map RowID to VARCHAR
+		if ( sqlType == Types.ROWID ) {
+			return QueryColumnType.VARCHAR;
+		}
+		// Everything else uses the default mapping
+		return QueryColumnType.fromSQLType( sqlType );
+	}
+
+	/**
+	 * Transform a value according to the driver's specific needs. This allows drivers to map custom Java classes to native BL types.
+	 * The default implementation will return the value as-is.
+	 * 
+	 * @param sqlType The SQL type of the value, from java.sql.Types
+	 * @param value   The value to transform
+	 * 
+	 * @return The transformed value
+	 */
+	// @Override
+	public Object transformValue( int sqlType, Object value ) {
+		if ( sqlType == Types.ROWID && value != null ) {
+			// Convert Oracle RowId to String
+			return value.toString();
+		}
+		return value;
 	}
 
 }
