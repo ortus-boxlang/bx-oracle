@@ -44,7 +44,7 @@ dependencies {
 	}
 
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
-	implementation 'com.oracle.database.jdbc:ojdbc17-production:23.9.0.25.07'
+	implementation 'com.oracle.database.jdbc:ojdbc17-production:23.26.0.0.0'
 
 	// Test Frameworks
 	testImplementation "org.junit.jupiter:junit-jupiter:5.+"
