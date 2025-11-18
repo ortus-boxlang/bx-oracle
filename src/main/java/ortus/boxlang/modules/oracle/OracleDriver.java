@@ -17,6 +17,7 @@
  */
 package ortus.boxlang.modules.oracle;
 
+import java.sql.RowId;
 import java.sql.Types;
 
 import ortus.boxlang.runtime.config.segments.DatasourceConfig;
@@ -149,8 +150,14 @@ public class OracleDriver extends GenericJDBCDriver {
 	 */
 	// @Override
 	public Object transformValue( int sqlType, Object value ) {
-		if ( sqlType == Types.ROWID && value != null ) {
+		if ( value == null ) {
+			return null;
+		}
+		if ( sqlType == Types.ROWID ) {
 			// Convert Oracle RowId to String
+			return value.toString();
+		}
+		if ( value instanceof RowId ) {
 			return value.toString();
 		}
 		return super.transformValue( sqlType, value );
