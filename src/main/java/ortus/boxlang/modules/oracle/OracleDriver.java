@@ -135,7 +135,7 @@ public class OracleDriver extends GenericJDBCDriver {
 			return QueryColumnType.VARCHAR;
 		}
 		// Everything else uses the default mapping
-		return QueryColumnType.fromSQLType( sqlType );
+		return super.mapSQLTypeToQueryColumnType( sqlType );
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class OracleDriver extends GenericJDBCDriver {
 			// Convert Oracle RowId to String
 			return value.toString();
 		}
-		return value;
+		return super.transformValue( sqlType, value );
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class OracleDriver extends GenericJDBCDriver {
 		if ( type == QueryColumnType.VARCHAR ) {
 			return Types.CHAR;
 		}
-		return type.sqlType;
+		return super.mapParamTypeToSQLType( type, value );
 	}
 
 }
