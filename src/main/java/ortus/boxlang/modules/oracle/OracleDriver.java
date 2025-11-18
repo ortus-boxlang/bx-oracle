@@ -156,4 +156,24 @@ public class OracleDriver extends GenericJDBCDriver {
 		return value;
 	}
 
+	/**
+	 * Map param type to SQL type. For the most part, these mappings are defined by the QueryColumnType enum,
+	 * but some drivers may have specific needs. Oracle, or example, uses CHAR even when you ask for VARCHAR which allows
+	 * char columns to match without trailing space.
+	 * 
+	 * @param type  The QueryColumnType of the parameter
+	 * @param value The value of the parameter (in case the mapping needs to consider the value)
+	 * 
+	 * @return The SQL type as defined in java.sql.Types
+	 */
+	// @Override
+	public int mapParamTypeToSQLType( QueryColumnType type, Object value ) {
+		// This allows a char column to match without trailing spaces or trimming.
+		// From my testing, it doesn't appear to have any negative side effects, but if neccessary, we can limit when this swap occurs based on the value.
+		if ( type == QueryColumnType.VARCHAR ) {
+			return Types.CHAR;
+		}
+		return type.sqlType;
+	}
+
 }
