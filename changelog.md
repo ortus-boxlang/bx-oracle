@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2025-12-05
+
 ### Added
 
 - Updates to all GitHub Actions to use latest Ortus standard actions.
@@ -54,7 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First iteration of this module
 
-[unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.5.0...HEAD
+[unreleased]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.5.0...v1.7.0
 [1.5.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ortus-boxlang/bx-oracle/compare/v1.2.0...v1.3.0
