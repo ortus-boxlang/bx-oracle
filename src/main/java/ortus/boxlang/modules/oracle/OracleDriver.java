@@ -17,12 +17,25 @@
  */
 package ortus.boxlang.modules.oracle;
 
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.Types;
+
+import ortus.boxlang.modules.oracle.util.OracleUtil;
+import ortus.boxlang.modules.oracle.util.Proc;
+import ortus.boxlang.modules.oracle.util.ProcDef;
+import ortus.boxlang.modules.oracle.util.ProcParameter;
 import ortus.boxlang.runtime.config.segments.DatasourceConfig;
+import ortus.boxlang.runtime.context.IBoxContext;
 import ortus.boxlang.runtime.dynamic.casters.StringCaster;
+import ortus.boxlang.runtime.jdbc.BoxConnection;
+import ortus.boxlang.runtime.jdbc.BoxStatement;
 import ortus.boxlang.runtime.jdbc.drivers.DatabaseDriverType;
 import ortus.boxlang.runtime.jdbc.drivers.GenericJDBCDriver;
 import ortus.boxlang.runtime.scopes.Key;
+import ortus.boxlang.runtime.types.Array;
 import ortus.boxlang.runtime.types.IStruct;
+import ortus.boxlang.runtime.types.QueryColumnType;
 import ortus.boxlang.runtime.types.Struct;
 
 /**
@@ -43,8 +56,7 @@ public class OracleDriver extends GenericJDBCDriver {
 	protected static final IStruct	AVAILABLE_PROTOCOLS			= Struct.of(
 	    "thin", "Default protocol",
 	    "oci", "Oracle Call Interface",
-	    "kprb", "Kerberos"
-	);
+	    "kprb", "Kerberos" );
 
 	/**
 	 * Constructor
@@ -84,9 +96,7 @@ public class OracleDriver extends GenericJDBCDriver {
 			    String.format(
 			        "The protocol '%s' is not valid for the Oracle Driver. Available protocols are %s",
 			        protocol,
-			        AVAILABLE_PROTOCOLS.keySet().toString()
-			    )
-			);
+			        AVAILABLE_PROTOCOLS.keySet().toString() ) );
 		}
 
 		// Validate the database
@@ -98,13 +108,13 @@ public class OracleDriver extends GenericJDBCDriver {
 			    protocol,
 			    host,
 			    port,
-			    sid
-			);
+			    sid );
 		}
 
 		String serviceName = ( String ) config.properties.getOrDefault( "serviceName", "" );
 		if ( serviceName.isBlank() ) {
-			throw new IllegalArgumentException( "Either the serviceName or SID property is required for the Oracle JDBC Driver." );
+			throw new IllegalArgumentException(
+			    "Either the serviceName or SID property is required for the Oracle JDBC Driver." );
 		}
 
 		// Build the connection URL
@@ -113,8 +123,140 @@ public class OracleDriver extends GenericJDBCDriver {
 		    protocol,
 		    host,
 		    port,
-		    serviceName
-		);
+		    serviceName );
+	}
+
+	/**
+	 * Map a SQL type to a QueryColumnType. The default implementation will use the
+	 * mappings in the QueryColumnType enum.
+	 * Override this method if the driver has specific mappings. Example, mapping
+	 * RowId in Oracle to a String type.
+	 * 
+	 * @param sqlType The SQL type to map, from java.sql.Types
+	 * 
+	 * @return The QueryColumnType
+	 */
+	// @Override
+	public QueryColumnType mapSQLTypeToQueryColumnType( int sqlType ) {
+		// We map RowID to VARCHAR
+		if ( sqlType == Types.ROWID ) {
+			return QueryColumnType.VARCHAR;
+		}
+		// Everything else uses the default mapping
+		return super.mapSQLTypeToQueryColumnType( sqlType );
+	}
+
+	/**
+	 * Transform a value according to the driver's specific needs. This allows
+	 * drivers to map custom Java classes to native BL types.
+	 * The default implementation will return the value as-is.
+	 * 
+	 * @param sqlType   The SQL type of the value, from java.sql.Types
+	 * @param value     The value to transform
+	 * @param statement The BoxStatement instance
+	 * 
+	 * @return The transformed value
+	 */
+	// @Override
+	public Object transformValue( int sqlType, Object value, BoxStatement statement ) {
+		if ( value == null ) {
+			return null;
+		}
+		if ( sqlType == Types.ROWID ) {
+			// Convert Oracle RowId to String
+			return value.toString();
+		}
+		if ( value instanceof RowId ) {
+			return value.toString();
+		}
+		return super.transformValue( sqlType, value, statement );
+	}
+
+	/**
+	 * Map param type to SQL type. For the most part, these mappings are defined by
+	 * the QueryColumnType enum,
+	 * but some drivers may have specific needs. Oracle, or example, uses CHAR even
+	 * when you ask for VARCHAR which allows
+	 * char columns to match without trailing space.
+	 * 
+	 * @param type  The QueryColumnType of the parameter
+	 * @param value The value of the parameter (in case the mapping needs to
+	 *              consider the value)
+	 * 
+	 * @return The SQL type as defined in java.sql.Types
+	 */
+	// @Override
+	public int mapParamTypeToSQLType( QueryColumnType type, Object value ) {
+		// This allows a char column to match without trailing spaces or trimming.
+		// From my testing, it doesn't appear to have any negative side effects, but if
+		// neccessary, we can limit when this swap occurs based on the value.
+		if ( type == QueryColumnType.VARCHAR ) {
+			return Types.CHAR;
+		}
+		return super.mapParamTypeToSQLType( type, value );
+	}
+
+	/**
+	 * Emit stored proc named parameter syntax according to the driver's specific
+	 * needs.
+	 * 
+	 * @param callSQL   The StringBuilder to append the parameter syntax to
+	 * @param paramName The name of the parameter
+	 */
+	public void emitStoredProcNamedParam( StringBuilder callSQL, String paramName ) {
+		// Ensure the parameter name starts with ':'
+		if ( !paramName.startsWith( ":" ) ) {
+			callSQL.append( ":" );
+		}
+		callSQL.append( paramName );
+	}
+
+	/**
+	 * Pre-process a stored procedure call. This allows the driver to do any specific pre-processing
+	 * before the procedure is called. This can include registering output parameters, etc.
+	 * 
+	 * @param conn          The BoxConnection instance
+	 * @param procedureName The name of the stored procedure
+	 * @param params        The parameters array
+	 * @param procResults   The procedure results array
+	 * @param context       The BoxLang context
+	 * @param debug         Whether debug mode is enabled
+	 */
+	public void preProcessProcCall( BoxConnection conn, String procedureName, Array params, Array procResults, IBoxContext context, boolean debug )
+	    throws SQLException {
+
+		Proc proc = OracleUtil.getProcMeta( conn, procedureName );
+		if ( debug ) {
+			System.out.println( proc.toString() );
+		}
+
+		// TODO: Handle overloads properly and find matching defitnition based on param count and types
+		ProcDef	def		= proc.definitions().get( 0 );
+		boolean	isNamed	= false;
+		if ( params.size() > 0 ) {
+			isNamed = ( ( IStruct ) params.get( 0 ) ).containsKey( Key.DBVarName );
+		}
+		for ( int i = 0; i < def.params().size(); i++ ) {
+			ProcParameter paramDef = def.params().get( i );
+			if ( paramDef.isOut() && paramDef.isRefCursor() ) {
+				IStruct newParam = Struct.of( Key.type, "out", Key.sqltype, "refcursor" );
+				// add out param for ref cursor
+				if ( !procResults.isEmpty() ) {
+					IStruct nextProcResult = ( IStruct ) procResults.get( 0 );
+					// TODO: Look at resultSet to see if they are skipping results
+					newParam.put( Key.variable, nextProcResult.get( Key._NAME ) );
+					procResults.removeAt( 0 );
+				}
+				if ( isNamed ) {
+					newParam.put( Key.DBVarName, ":" + paramDef.name() );
+				}
+				// TODO: Assuming it goes on the end. May need to actually insert at position
+				params.add( newParam );
+			}
+		}
+		if ( !procResults.isEmpty() ) {
+			throw new SQLException( "More proc results were specified than are present in the procedure definition. " + procResults.toString() );
+		}
 	}
 
 }
