@@ -255,7 +255,9 @@ public class OracleDriver extends GenericJDBCDriver {
 			}
 		}
 		if ( !procResults.isEmpty() ) {
-			throw new SQLException( "More proc results were specified than are present in the procedure definition. " + procResults.toString() );
+			// To be compat just ignore extra proc results, which actually matches non-oracle behavior
+			procResults.clear();
+			// throw new SQLException( "More proc results were specified than are present in the procedure definition. " + procResults.toString() );
 		}
 	}
 
