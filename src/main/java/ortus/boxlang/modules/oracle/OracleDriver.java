@@ -204,11 +204,12 @@ public class OracleDriver extends GenericJDBCDriver {
 	 * @param paramName The name of the parameter
 	 */
 	public void emitStoredProcNamedParam( StringBuilder callSQL, String paramName ) {
-		// Ensure the parameter name starts with ':'
-		if ( !paramName.startsWith( ":" ) ) {
-			callSQL.append( ":" );
+		// remove any leading :
+		if ( paramName.startsWith( ":" ) ) {
+			paramName = paramName.substring( 1 );
 		}
-		callSQL.append( paramName );
+		// output paraName => ?
+		callSQL.append( paramName ).append( " => " ).append( "?" );
 	}
 
 	/**
@@ -233,12 +234,28 @@ public class OracleDriver extends GenericJDBCDriver {
 		// TODO: Handle overloads properly and find matching defitnition based on param count and types
 		ProcDef	def		= proc.definitions().get( 0 );
 		boolean	isNamed	= false;
+		// If there is at least one param, check and see if it has a name
 		if ( params.size() > 0 ) {
 			isNamed = ( ( IStruct ) params.get( 0 ) ).containsKey( Key.DBVarName );
+		} else {
+			// No params provided - force named mode since we'll need to add ref cursor params by name
+			isNamed = true;
 		}
 		for ( int i = 0; i < def.params().size(); i++ ) {
 			ProcParameter paramDef = def.params().get( i );
 			if ( paramDef.isOut() && paramDef.isRefCursor() ) {
+				// Validate that we have enough params for the preceding parameters (only for positional params)
+				// Named params can skip optional params with default values
+				if ( !isNamed && params.size() < i ) {
+					throw new SQLException(
+					    String.format(
+					        "Missing parameters for stored procedure '%s'. Expected at least %d parameters before the ref cursor parameter '%s' at position %d, but only %d were provided.",
+					        procedureName,
+					        i,
+					        paramDef.name(),
+					        i + 1,
+					        params.size() ) );
+				}
 				IStruct newParam = Struct.of( Key.type, "out", Key.sqltype, "refcursor" );
 				// add out param for ref cursor
 				if ( !procResults.isEmpty() ) {
@@ -249,9 +266,12 @@ public class OracleDriver extends GenericJDBCDriver {
 				}
 				if ( isNamed ) {
 					newParam.put( Key.DBVarName, ":" + paramDef.name() );
+					// For named params, just append - order doesn't matter since names handle mapping
+					params.add( newParam );
+				} else {
+					// For positional params, insert at the correct position based on the definition
+					params.insertAt( i + 1, newParam );
 				}
-				// TODO: Assuming it goes on the end. May need to actually insert at position
-				params.add( newParam );
 			}
 		}
 		if ( !procResults.isEmpty() ) {
