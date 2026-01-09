@@ -44,14 +44,14 @@ dependencies {
 	}
 
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
-	implementation 'com.oracle.database.jdbc:ojdbc17-production:23.9.0.25.07'
+	implementation 'com.oracle.database.jdbc:ojdbc17-production:23.26.0.0.0'
 
 	// Test Frameworks
-	testImplementation "org.junit.jupiter:junit-jupiter:5.+"
+	testImplementation "org.junit.jupiter:junit-jupiter:6.+"
+	// Explicitly declare the JUnit platform launcher (to avoid deprecation)
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 	testImplementation "org.mockito:mockito-core:5.+"
 	testImplementation "com.google.truth:truth:1.+"
-	// Explicitly declare the JUnit platform launcher (to avoid deprecation)
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 java {
