@@ -32,6 +32,7 @@ import ortus.boxlang.runtime.jdbc.BoxConnection;
 import ortus.boxlang.runtime.jdbc.BoxStatement;
 import ortus.boxlang.runtime.jdbc.drivers.DatabaseDriverType;
 import ortus.boxlang.runtime.jdbc.drivers.GenericJDBCDriver;
+import ortus.boxlang.runtime.jdbc.drivers.JDBCDriverFeature;
 import ortus.boxlang.runtime.scopes.Key;
 import ortus.boxlang.runtime.types.Array;
 import ortus.boxlang.runtime.types.IStruct;
@@ -69,6 +70,8 @@ public class OracleDriver extends GenericJDBCDriver {
 		this.defaultDelimiter		= DEFAULT_DELIMITER;
 		this.defaultCustomParams	= DEFAULT_CUSTOM_PARAMS;
 		this.defaultProperties		= DEFAULT_HIKARI_PROPERTIES;
+
+		setFeatures( JDBCDriverFeature.TRIM_TRAILING_SEMICOLONS );
 	}
 
 	@Override
