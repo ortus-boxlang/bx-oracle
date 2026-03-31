@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
 	// BoxLang Runtime
-	println "+ Checking for BoxLang Jar in ../boxlang/build/libs/boxlang-${boxlangVersion}.jar"
+	// println "+ Checking for BoxLang Jar in ../boxlang/build/libs/boxlang-${boxlangVersion}.jar"
 	if ( file( "../boxlang/build/libs/boxlang-${boxlangVersion}.jar" ).exists() ) {
 		// Run against a local BoxLang build
 		// You must run `./gradle build -x test` in the BoxLang project
