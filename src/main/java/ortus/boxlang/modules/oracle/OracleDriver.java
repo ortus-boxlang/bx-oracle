@@ -268,7 +268,25 @@ public class OracleDriver extends GenericJDBCDriver {
 					procResults.removeAt( 0 );
 				}
 				if ( isNamed ) {
-					newParam.put( Key.DBVarName, ":" + paramDef.name() );
+					String newParamName = ":" + paramDef.name();
+					newParam.put( Key.DBVarName, newParamName );
+
+					// Check the existing params first for one matching this name (case insensitive way) and remove it first so we don't have dupes.
+					int existingParamIndex = -1;
+					for ( int j = 0; j < params.size(); j++ ) {
+						IStruct existingParam = ( IStruct ) params.get( j );
+						if ( existingParam.containsKey( Key.DBVarName ) ) {
+							String existingName = ( String ) existingParam.get( Key.DBVarName );
+							if ( existingName.equalsIgnoreCase( newParamName ) ) {
+								existingParamIndex = j;
+								break;
+							}
+						}
+					}
+					if ( existingParamIndex != -1 ) {
+						params.removeAt( existingParamIndex );
+					}
+
 					// For named params, just append - order doesn't matter since names handle mapping
 					params.add( newParam );
 				} else {
