@@ -229,7 +229,7 @@ public class OracleDriver extends GenericJDBCDriver {
 	public void preProcessProcCall( BoxConnection conn, String procedureName, Array params, Array procResults, IBoxContext context, boolean debug )
 	    throws SQLException {
 
-		Proc proc = OracleUtil.getProcMeta( conn, procedureName );
+		Proc proc = getProcMeta( conn, procedureName );
 		if ( debug ) {
 			System.out.println( proc.toString() );
 		}
@@ -244,9 +244,11 @@ public class OracleDriver extends GenericJDBCDriver {
 			// No params provided - force named mode since we'll need to add ref cursor params by name
 			isNamed = true;
 		}
+		int resultSetIndex = 0;
 		for ( int i = 0; i < def.params().size(); i++ ) {
 			ProcParameter paramDef = def.params().get( i );
 			if ( paramDef.isOut() && paramDef.isRefCursor() ) {
+				resultSetIndex++;
 				// Validate that we have enough params for the preceding parameters (only for positional params)
 				// Named params can skip optional params with default values
 				if ( !isNamed && params.size() < i ) {
@@ -259,16 +261,31 @@ public class OracleDriver extends GenericJDBCDriver {
 					        i + 1,
 					        params.size() ) );
 				}
-				IStruct newParam = Struct.of( Key.type, "out", Key.sqltype, "refcursor" );
-				// add out param for ref cursor
-				if ( !procResults.isEmpty() ) {
-					IStruct nextProcResult = ( IStruct ) procResults.get( 0 );
-					// TODO: Look at resultSet to see if they are skipping results
-					newParam.put( Key.variable, nextProcResult.get( Key._NAME ) );
-					procResults.removeAt( 0 );
+				IStruct	newParam			= Struct.of( Key.type, "out", Key.sqltype, "refcursor" );
+				IStruct	matchingProcResult	= consumeMatchingProcResult( procResults, resultSetIndex );
+				if ( matchingProcResult != null && matchingProcResult.containsKey( Key._NAME ) ) {
+					newParam.put( Key.variable, matchingProcResult.get( Key._NAME ) );
 				}
 				if ( isNamed ) {
-					newParam.put( Key.DBVarName, ":" + paramDef.name() );
+					String newParamName = ":" + paramDef.name();
+					newParam.put( Key.DBVarName, newParamName );
+
+					// Check the existing params first for one matching this name (case insensitive way) and remove it first so we don't have dupes.
+					int existingParamIndex = -1;
+					for ( int j = 0; j < params.size(); j++ ) {
+						IStruct existingParam = ( IStruct ) params.get( j );
+						if ( existingParam.containsKey( Key.DBVarName ) ) {
+							String existingName = ( String ) existingParam.get( Key.DBVarName );
+							if ( existingName.equalsIgnoreCase( newParamName ) ) {
+								existingParamIndex = j;
+								break;
+							}
+						}
+					}
+					if ( existingParamIndex != -1 ) {
+						params.removeAt( existingParamIndex );
+					}
+
 					// For named params, just append - order doesn't matter since names handle mapping
 					params.add( newParam );
 				} else {
@@ -282,6 +299,33 @@ public class OracleDriver extends GenericJDBCDriver {
 			procResults.clear();
 			// throw new SQLException( "More proc results were specified than are present in the procedure definition. " + procResults.toString() );
 		}
+	}
+
+	protected Proc getProcMeta( BoxConnection conn, String procedureName ) throws SQLException {
+		return OracleUtil.getProcMeta( conn, procedureName );
+	}
+
+	private IStruct consumeMatchingProcResult( Array procResults, int resultSetIndex ) throws SQLException {
+		while ( !procResults.isEmpty() ) {
+			IStruct nextProcResult = ( IStruct ) procResults.get( 0 );
+			if ( !nextProcResult.containsKey( Key.resultSet ) ) {
+				procResults.removeAt( 0 );
+				return nextProcResult;
+			}
+
+			int requestedResultSetIndex = nextProcResult.getAsInteger( Key.resultSet );
+			if ( requestedResultSetIndex == resultSetIndex ) {
+				procResults.removeAt( 0 );
+				return nextProcResult;
+			}
+			if ( requestedResultSetIndex > resultSetIndex ) {
+				return null;
+			}
+
+			procResults.removeAt( 0 );
+		}
+
+		return null;
 	}
 
 }

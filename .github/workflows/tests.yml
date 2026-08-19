@@ -13,7 +13,7 @@ env:
 
 jobs:
   tests:
-    name: Tests ${{ github.event.repository.name }}
+    name: Tests ${{ github.event.repository.name }} on ${{ matrix.os }} with JDK ${{ matrix.jdkVersion }}
     runs-on: ${{ matrix.os }}
     services:
       oracle:
@@ -35,14 +35,6 @@ jobs:
         os: [ "ubuntu-latest" ]
         jdkVersion: [ "21" ]
         experimental: [false]
-        #include:
-          #- jdkVersion: "17"
-          #  os: "windows-latest"
-          #  experimental: true
-          # Disabled for now until we can figure out the gradle matrix
-          #- jdkVersion: "17"
-          #  os: "ubuntu-latest"
-          #  experimental: true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -54,43 +46,19 @@ jobs:
           java-version: ${{ matrix.jdkVersion }}
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
-
-      # - name: Setup Database and Fixtures
-      #   run: |
-      #     sudo systemctl start mysql.service
-      #     mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} -e 'CREATE DATABASE mementifier;'
-      #     mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} < test-harness/tests/resources/coolblog.sql
-
-      #- name: Setup CommandBox CLI
-      #  uses: Ortus-Solutions/setup-commandbox@v2.0.1
-
-      # Not Needed in this module
-      #- name: Setup Environment For Testing Process
-      #  run: |
-      #    # Setup .env
-      #    touch .env
-      #    # ENV
-      #    printf "DB_HOST=localhost\n" >> .env
-      #    printf "DB_DATABASE=mydatabase\n" >> .env
-      #    printf "DB_DRIVER=MySQL\n" >> .env
-      #    printf "DB_USER=${{ env.DB_USER }}\n" >> .env
-      #    printf "DB_PASSWORD=${{ env.DB_PASSWORD }}\n" >> .env
-      #    printf "DB_CLASS=com.mysql.cj.jdbc.Driver\n" >> .env
-      #    printf "DB_BUNDLEVERSION=8.0.19\n" >> .env
-      #    printf "DB_BUNDLENAME=com.mysql.cj\n" >> .env
 
       - name: Test Module
         run: |
           gradle downloadBoxLang
           # this is done in order to build the module structure before testing
-          gradle shadowJar test --stacktrace --console=plain --info
+          gradle shadowJar test --stacktrace --console=plain
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: tests-${{ matrix.os }}-${{ matrix.jdkVersion }}
           path: |
@@ -121,7 +89,7 @@ jobs:
       issues: read
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 

@@ -37,7 +37,16 @@ public record ProcParameter( int position, String name, String typeName, Key inO
 	 * @return True if the parameter is an OUT parameter, false otherwise
 	 */
 	public boolean isOut() {
-		return inOut.equals( OracleUtil.outKey );
+		return inOut.equals( OracleUtil.outKey ) || inOut.equals( OracleUtil.inoutKey );
+	}
+
+	/**
+	 * Indicates if the parameter is an IN parameter
+	 * 
+	 * @return True if the parameter is an IN parameter, false otherwise
+	 */
+	public boolean isIn() {
+		return inOut.equals( OracleUtil.inKey ) || inOut.equals( OracleUtil.inoutKey );
 	}
 
 	/**
